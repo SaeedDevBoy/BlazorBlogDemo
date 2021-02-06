@@ -1,4 +1,5 @@
 ﻿@using BlazorBlogDemo.Shared
+@inject BlazorBlogDemo.Client.Services.IBlogService BlogService
 
 
 @foreach (var post in Posts)
@@ -10,20 +11,17 @@
         <div>
             @post.Description
         </div>
+        <div>
+            <a href="/posts/@post.Url">Read more...</a>
+        </div>
     </div>
 }
 
 @code {
-    public List<BlogPost> Posts { get; set; } = new List<BlogPost>()
+    private List<BlogPost> Posts = new List<BlogPost>();
+
+    protected override void OnInitialized()
     {
-        new BlogPost{
-            Title="A New Tutorial About Blazor For Everyone" ,
-            Description="This is new tutorial, showing you how to build a blog with blazor"},
-        new BlogPost{
-            Title="My First Blog Post" ,
-            Description="Hi! This is my new shiny blog. Enjoy!"}
-
-    };
-
-
+        Posts = BlogService.GetBlogPosts();
+    }
 }
