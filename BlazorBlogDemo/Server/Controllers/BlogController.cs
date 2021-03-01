@@ -1,4 +1,5 @@
-﻿using BlazorBlogDemo.Shared;
+﻿using BlazorBlogDemo.Server.Data;
+using BlazorBlogDemo.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,6 +13,11 @@ namespace BlazorBlogDemo.Server.Controllers
     [ApiController]
     public class BlogController : ControllerBase
     {
+        private readonly BlogDbContext _context;
+        public BlogController(BlogDbContext context)
+        {
+            _context = context;
+        }
         public List<BlogPost> Posts { get; set; } = new List<BlogPost>() {
             new BlogPost{
             Url="new-tutorial",
@@ -29,13 +35,13 @@ namespace BlazorBlogDemo.Server.Controllers
         [HttpGet]
         public ActionResult<List<BlogPost>> AllTheBlogPosts() 
         {
-            return Ok(Posts);
+            return Ok(_context.BlogPosts);
         }
 
         [HttpGet("{url}")] 
         public ActionResult<BlogPost> SingleBlogPostByUrl(string url) 
         {
-            var post = Posts.FirstOrDefault(p=>p.Url.ToLower().Equals(url.ToLower()));
+            var post = _context.BlogPosts.FirstOrDefault(p=>p.Url.ToLower().Equals(url.ToLower()));
             if (post==null)
             {
                 //return NotFound("The Post Does Not Exist .");
